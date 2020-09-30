@@ -52,10 +52,12 @@ if __name__ == '__main__':
 		formatter_class=ArgumentDefaultsHelpFormatter, conflict_handler='resolve')
 	parser.add_argument("-d", "--outp-dir", default=None,
 		help='Output directory for the converted files. The input directory is used by default.')
+	parser.add_argument("-c", "--compact", default=None,
+		help='Produce compact output without the pretty format.')
 	parser.add_argument("--nan-value", default=None,
 		help='Prohibit NaN value to be strictly compliant with the JSON format by replacing NaN with the specified floating point value.')
 	parser.add_argument('input', metavar='INPUT', nargs='+',
-		help='Wildcards of input files in the Python Pickle format to be converted')
+		help='Wildcards of input files in the Python Pickle format to be converted.')
 	args = parser.parse_args()
 
 	# Prepare output directory
@@ -74,5 +76,5 @@ if __name__ == '__main__':
 					ofname = os.path.join(args.outp_dir, os.path.split(ofname)[1])
 				with open(ofname, 'w') as fout:
 					NumpyDataEncoder.nan = args.nan_value
-					json.dump(data, fout, cls=NumpyDataEncoder, allow_nan=args.nan_value is None)
+					json.dump(data, fout, cls=NumpyDataEncoder, indent=None if args.compact else 2, allow_nan=args.nan_value is None)
 				print('  converted to:' + ofname)
